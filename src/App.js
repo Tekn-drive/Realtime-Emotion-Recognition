@@ -2,6 +2,7 @@ import './App.css';
 import Camera from './Camera.js';
 
 function App() {
+
   return (
     <div className="App">
       <header className="App-header">
