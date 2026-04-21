@@ -54,8 +54,9 @@ while True:
         prediction = model.predict(cropped_img)
         maxindex = int(np.argmax(prediction))
         confidence = float(np.max(prediction))
-        cv2.putText(frame, f"{emotion_dict[maxindex]}: {confidence:.2f}", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-    
+        if confidence>=0.5:
+            cv2.putText(frame, f"{emotion_dict[maxindex]}: {confidence:.2f}", (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
     cv2.imshow('Video', cv2.resize(frame,(500,500),interpolation = cv2.INTER_CUBIC))
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

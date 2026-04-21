@@ -8,6 +8,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
 import numpy as np
 import base64
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -36,7 +37,7 @@ model.add(Flatten())
 model.add(Dense(1024, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(7, activation='softmax'))
-model.load_weights('Model/emotionrecognition.h5')
+model.load_weights('Utils/Model/emotionrecognition.h5')
 
 # prevents openCL usage and unnecessary logging messages
 cv2.ocl.setUseOpenCL(False)
@@ -44,9 +45,10 @@ cv2.ocl.setUseOpenCL(False)
 # dictionary mapping class labels with corresponding emotions
 emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
 
-facecasc = cv2.CascadeClassifier('Model/haarcascade_frontalface_default.xml')
+facecasc = cv2.CascadeClassifier('Utils/Model/haarcascade_frontalface_default.xml')
+print("Face cascade loaded successfully")
 
-class frameInput(model):
+class frameInput(BaseModel):
     frame: str
 
 @app.post("/predict_emotion")
@@ -69,6 +71,9 @@ def predict_emotion(data: frameInput):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = facecasc.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
 
+        if faces is None or len(faces) == 0:
+            return {"error": "No faces detected"}
+        
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y-50), (x+w, y+h+10), (255, 0, 0), 2)
             roi_gray = gray[y:y + h, x:x + w]
@@ -77,7 +82,16 @@ def predict_emotion(data: frameInput):
             cropped_img = np.expand_dims(cropped_img, axis=(0, -1))
             prediction = model.predict(cropped_img)
             maxindex = int(np.argmax(prediction))
-            confidence = float(np.max(prediction))
-
+            confidence = round(float(np.max(prediction)), 2)
+            return {
+                "emotion": emotion_dict[maxindex],
+                "confidence": confidence,
+                "box": {
+                    "x": int(x),
+                    "y": int(y),
+                    "width": int(w),
+                    "height": int(h)
+                }
+            }
     except Exception as e:
         return {"error": str(e)}
