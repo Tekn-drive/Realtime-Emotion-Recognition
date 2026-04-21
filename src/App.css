@@ -46,3 +46,8 @@
 .emotion-table td {
   border: 2px solid white;
 }
+
+.camera-container{
+  height:400px;
+  width:400px;
+}
