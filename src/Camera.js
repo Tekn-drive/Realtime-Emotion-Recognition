@@ -10,7 +10,8 @@ export default function Camera() {
 
   useEffect(() => {
     let stream;
-
+    let isProcessing = false;
+    
     async function startCamera() {
       try {
         stream = await navigator.mediaDevices.getUserMedia({
@@ -31,11 +32,22 @@ export default function Camera() {
 
     async function startSendingFrames() {
       setInterval(async () => {
+        if (isProcessing) return;
+
+        isProcessing = true;
+
         const video = videoRef.current;
         const canvas = canvasRef.current;
 
-        if (!video || !canvas) return;
-        if (video.readyState !== 4) return;
+        if (!video || !canvas) {
+            isProcessing = false;
+            return;
+        }
+
+        if (video.readyState !== 4) {
+            isProcessing = false;
+            return;
+        }
 
         const ctx = canvas.getContext("2d");
 
@@ -68,6 +80,7 @@ export default function Camera() {
             setConfidence(result.confidence);
             setBox(result.box);
         }
+        isProcessing = false;
       }, 100);
     }
 
@@ -82,13 +95,17 @@ export default function Camera() {
   }, []);
 
 return (
-    <div style={{ position: "relative", width: "fit-content" }}>
+    <div style={{ position: "relative"}}>
       {/* Webcam */}
       <video
         ref={videoRef}
         autoPlay
         playsInline
-        className="w-full max-w-md rounded-lg border"
+        style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "cover"
+        }}
       />
 
       {/* Hidden canvas for frame capture */}

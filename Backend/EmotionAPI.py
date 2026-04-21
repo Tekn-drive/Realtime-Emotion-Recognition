@@ -82,7 +82,7 @@ def predict_emotion(data: frameInput):
             cropped_img = np.expand_dims(cropped_img, axis=(0, -1))
             prediction = model.predict(cropped_img)
             maxindex = int(np.argmax(prediction))
-            confidence = round(float(np.max(prediction)), 2)
+            confidence = float(np.max(prediction))
             return {
                 "emotion": emotion_dict[maxindex],
                 "confidence": confidence,
