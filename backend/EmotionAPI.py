@@ -1,14 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import cv2
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import MaxPooling2D
 import numpy as np
 import base64
-from pydantic import BaseModel
+from pydantic import BaseModel 
+from utils.model_methods import initialize_model_and_others, process_frame 
 
 app = FastAPI()
 
@@ -20,31 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model = Sequential()
-
-model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
-model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
-model.add(Flatten())
-model.add(Dense(1024, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(7, activation='softmax'))
-model.load_weights('utils/model/emotionrecognition.h5')
+model, emotions, facecasc = initialize_model_and_others()
 
 # prevents openCL usage and unnecessary logging messages
 cv2.ocl.setUseOpenCL(False)
-
-# dictionary mapping class labels with corresponding emotions
-emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
-
-facecasc = cv2.CascadeClassifier('utils/model/haarcascade_frontalface_default.xml')
-print("Face cascade loaded successfully")
 
 class frameInput(BaseModel):
     frame: str
@@ -66,8 +41,7 @@ def predict_emotion(data: frameInput):
         if frame is None:
             return {"error": "Invalid frame received"}
         
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = facecasc.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
+        gray, faces = process_frame(frame, facecasc)
 
         if faces is None or len(faces) == 0:
             return {"error": "No faces detected"}
@@ -82,7 +56,7 @@ def predict_emotion(data: frameInput):
             maxindex = int(np.argmax(prediction))
             confidence = float(np.max(prediction))
             return {
-                "emotion": emotion_dict[maxindex],
+                "emotion": emotions[maxindex],
                 "confidence": confidence,
                 "box": {
                     "x": int(x),

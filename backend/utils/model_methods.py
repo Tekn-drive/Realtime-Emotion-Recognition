@@ -5,10 +5,14 @@ from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.layers import MaxPooling2D
 import numpy as np
+import os 
 
 def initialize_model_and_others():
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    cascade_path = os.path.join(BASE_DIR, "model", "haarcascade_frontalface_default.xml")
+    model_path = os.path.join(BASE_DIR, "model", "emotionrecognition.h5")
     emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
-    facecasc = cv2.CascadeClassifier('model/haarcascade_frontalface_default.xml')
+    facecasc = cv2.CascadeClassifier(cascade_path)
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
     model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
@@ -23,7 +27,7 @@ def initialize_model_and_others():
     model.add(Dense(1024, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(7, activation='softmax'))
-    model.load_weights('model/emotionrecognition.h5')
+    model.load_weights(model_path)
     return model, emotion_dict, facecasc
 
 def process_frame(frame, facecasc):

@@ -16,7 +16,7 @@ while True:
     if not ret:
         break
         
-    results = model_methods.camera_prediction_CLI(model, frame, facecasc, emotions)
+    results = camera_prediction_CLI(model, frame, facecasc, emotions)
 
     for result in results:
         x, y, w, h = result["box"]
