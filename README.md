@@ -10,6 +10,9 @@ Originally developed as a university computer science project (2023), this is a 
 - Emotion prediction with confidence score
 - REST API backend for model inference
 
+## 📸 Demo
+<img width="1366" height="680" alt="Screenshot (162)" src="https://github.com/user-attachments/assets/5b04f4be-bd9c-4cb3-ad14-40877e855953" />
+
 ### Usage Guide
 #### API:
 - Make sure that you changed your directory from root to backend by doing `cd backend`
