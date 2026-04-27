@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 
-export default function Camera() {
+export default function Camera({ setRows }) {
   const videoRef = useRef(null);
   const [error, setError] = useState(null);
   const canvasRef = useRef(null);
@@ -76,6 +76,7 @@ export default function Camera() {
 
         // 🔥 Update UI from API response
         if (result.emotion) {
+            setRows(prev => [{emotion: result.emotion, confidence: result.confidence}, ...prev.slice(0, 9)]);
             setEmotion(result.emotion);
             setConfidence(result.confidence);
             setBox(result.box);

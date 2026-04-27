@@ -1,8 +1,7 @@
 .App {
   text-align: center;
-  background-color: #282c34;
-  height: 100%;
-  position: absolute;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #ff00cc);
+  position: fixed;
   inset: 0;
 }
 
@@ -13,10 +12,10 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  font-weight: bold;
 }
 
 .table-and-camera{
-  background-color: #282c34;
   min-height: 20vh;
   display: flex;
   flex-direction: row;
@@ -33,7 +32,7 @@
   display: flex;
   justify-content: center;
   margin-left: -10vh;
-  margin-top: 10vh;
+  margin-top: 3vh;
 }
 
 .emotion-table {
@@ -45,7 +44,4 @@
 .emotion-table th,
 .emotion-table td {
   border: 2px solid white;
-}
-
-.camera-container{
 }

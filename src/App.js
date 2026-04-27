@@ -1,7 +1,9 @@
 import './App.css';
 import Camera from './Camera.js';
+import { useState } from 'react';
 
 function App() {
+  const [rows, setRows] = useState([]);
 
   return (
     <div className="App">
@@ -18,24 +20,17 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Happy</td>
-                <td>0.85</td>
-              </tr>
-              <tr>
-                <td>Sad</td>
-                <td>0.10</td>
-              </tr>
-              <tr>
-                <td>Neutral</td>
-                <td>0.05</td>
-              </tr>
+               {rows.map((row, index) => (
+                <tr key={index}>
+                  <td>{row.emotion}</td>
+                  <td>{row.confidence.toFixed(2)}</td>
+                </tr>
+              ))}
             </tbody>
             </table>
           </div>
-
           <div className="camera-container">
-            <Camera />
+            <Camera setRows={setRows} />
           </div>
         </div>
     </div>
