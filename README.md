@@ -16,11 +16,12 @@ Originally developed as a university computer science project (2023), this is a 
 ### Usage Guide
 #### API:
 - Make sure that you changed your directory from root to backend by doing `cd backend`
-- Install all requirements from requirements.txt for your python environment (preferably Python 3.10.0)
+- Install all requirements from requirements.txt for your python environment (preferably Python 3.10.0) `pip install -r requirements.txt`
 - Launch the API by typing `uvicorn EmotionAPI:app --reload --port 8000`
 
 #### React App:
 - Make sure that you are in the root folder of this project and that the API has been launched.
+- Type `npm install`
 - Type `npm start`
 - Enjoy the app
 
