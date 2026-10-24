@@ -9,7 +9,8 @@ cv2.ocl.setUseOpenCL(False)
 
 # start the webcam feed
 #cap = cv2.VideoCapture('range.gif')
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap = cv2.VideoCapture(0)
+print("Camera started")
 while True:
     # Capture frame
     ret, frame = cap.read()

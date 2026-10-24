@@ -44,8 +44,9 @@ def predict_emotion(data: frameInput):
         gray, faces = process_frame(frame, facecasc)
 
         if faces is None or len(faces) == 0:
-            return {"error": "No faces detected"}
-        
+            return []
+
+        results = []
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y-50), (x+w, y+h+10), (255, 0, 0), 2)
             roi_gray = gray[y:y + h, x:x + w]
@@ -55,7 +56,8 @@ def predict_emotion(data: frameInput):
             prediction = model.predict(cropped_img)
             maxindex = int(np.argmax(prediction))
             confidence = float(np.max(prediction))
-            return {
+
+            results.append({
                 "emotion": emotions[maxindex],
                 "confidence": confidence,
                 "box": {
@@ -63,7 +65,8 @@ def predict_emotion(data: frameInput):
                     "y": int(y),
                     "width": int(w),
                     "height": int(h)
-                }
-            }
+                    }
+            })
+        return results
     except Exception as e:
         return {"error": str(e)}

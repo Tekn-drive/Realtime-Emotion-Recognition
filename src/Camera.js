@@ -4,9 +4,7 @@ export default function Camera({ setRows }) {
   const videoRef = useRef(null);
   const [error, setError] = useState(null);
   const canvasRef = useRef(null);
-  const [emotion, setEmotion] = useState("");
-  const [confidence, setConfidence] = useState(0);
-  const [box, setBox] = useState(null);
+  const [faces, setFaces] = useState([]);
 
   useEffect(() => {
     let stream;
@@ -75,16 +73,21 @@ export default function Camera({ setRows }) {
         const result = await response.json();
 
         // 🔥 Update UI from API response
-        if (result.emotion) {
-            setRows(prev => [{emotion: result.emotion, confidence: result.confidence}, ...prev.slice(0, 9)]);
-            setEmotion(result.emotion);
-            setConfidence(result.confidence);
-            setBox(result.box);
+        if (Array.isArray(result)) {
+          setFaces(result);
+          if (result.length > 0) {
+            setRows(prev => [
+              ...result.map(face => ({
+                emotion: face.emotion,
+                confidence: face.confidence
+              })),
+              ...prev
+            ].slice(0, 10));
+          }
         }
         isProcessing = false;
       }, 100);
     }
-
 
     startCamera();
 
@@ -116,35 +119,37 @@ return (
       />
 
       {/* Bounding Box Overlay */}
-      {box && (
-        <div
+      {faces.map((face, index) => (
+        <div key={index}
           style={{
             position: "absolute",
-            left: `${box.x}px`,
-            top: `${box.y}px`,
-            width: `${box.width}px`,
-            height: `${box.height}px`,
+            left: `${face.box.x}px`,
+            top: `${face.box.y}px`,
+            width: `${face.box.width}px`,
+            height: `${face.box.height}px`,
             border: "2px solid red",
+            boxSizing: "border-box",
             pointerEvents: "none",
           }}
         >
-          {/* Label */}
-          <div
+
+        <div
             style={{
-              position: "absolute",
-              top: "-30px",
-              left: "0",
-              background: "red",
-              color: "white",
-              padding: "4px 8px",
-              fontSize: "14px",
-              borderRadius: "4px",
+                position: "absolute",
+                top: "-30px",
+                left: "0",
+                background: "red",
+                color: "white",
+                padding: "4px 8px",
+                fontSize: "14px",
+                borderRadius: "4px",
+                whiteSpace: "nowrap",
             }}
-          >
-            {emotion} {confidence.toFixed(2)}
-          </div>
+        >
+            {face.emotion} {(face.confidence * 100).toFixed(1)}%
         </div>
-      )}
+    </div>
+  ))}
     </div>
   );
 }
