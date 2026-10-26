@@ -11,7 +11,7 @@ def initialize_model_and_others():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     cascade_path = os.path.join(BASE_DIR, "model", "haarcascade_frontalface_default.xml")
     model_path = os.path.join(BASE_DIR, "model", "emotionrecognition.h5")
-    emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
+    emotion_dict = {0: "angry", 1: "disgust", 2: "fear", 3: "happy", 4: "neutral", 5: "sad", 6: "surprise"}
     facecasc = cv2.CascadeClassifier(cascade_path)
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
