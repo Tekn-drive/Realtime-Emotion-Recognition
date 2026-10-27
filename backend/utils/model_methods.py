@@ -5,8 +5,8 @@ import os
 
 def initialize_model_and_others():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    cascade_path = os.path.join(BASE_DIR, "model", "haarcascade_frontalface_default.xml")
-    model_path = os.path.join(BASE_DIR, "model", "emotion_classifier.keras")
+    cascade_path = os.path.join(BASE_DIR, "models", "haarcascade_frontalface_default.xml")
+    model_path = os.path.join(BASE_DIR, "models", "emotion_classifier.keras")
     emotion_dict = {0: "angry", 1: "disgust", 2: "fear", 3: "happy", 4: "neutral", 5: "sad", 6: "surprise"}
     facecasc = cv2.CascadeClassifier(cascade_path)
     model = load_model(model_path)
