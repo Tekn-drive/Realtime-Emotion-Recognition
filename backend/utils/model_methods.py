@@ -1,33 +1,15 @@
 import cv2
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.models import load_model
 import numpy as np
 import os 
 
 def initialize_model_and_others():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     cascade_path = os.path.join(BASE_DIR, "model", "haarcascade_frontalface_default.xml")
-    model_path = os.path.join(BASE_DIR, "model", "emotionrecognition.h5")
+    model_path = os.path.join(BASE_DIR, "model", "emotion_classifier.keras")
     emotion_dict = {0: "angry", 1: "disgust", 2: "fear", 3: "happy", 4: "neutral", 5: "sad", 6: "surprise"}
     facecasc = cv2.CascadeClassifier(cascade_path)
-    model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
-    model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-    model.add(Flatten())
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(7, activation='softmax'))
-    model.load_weights(model_path)
+    model = load_model(model_path)
     return model, emotion_dict, facecasc
 
 def process_frame(frame, facecasc):
