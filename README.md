@@ -3,8 +3,6 @@ A real-time webcam-based emotion recognition system powered by deep learning, no
 
 Originally developed as a university computer science project (2023), this is a refined version featuring a modern web interface and improved usability.
 
-Note: emotionrecognition.h5 file is the weights of the model while emotion_classifier.keras is the entire model.
-
 ## 🚀 New Update (v2.0)
 - Migrated from CLI-based application to a React web app
 - Real-time webcam emotion detection
